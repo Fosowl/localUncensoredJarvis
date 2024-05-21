@@ -3,10 +3,15 @@ Like gpt4o but slower and wilder, running locally using ollama and a bunch of hu
 
 this readme will be improved..
 
+## Hardware
+
+This run fine on macbook air M1, check ollama llama2 (`https://github.com/ollama/ollama`) to know if it can run on your device.
+
 ## Install
 
 - Make sure you have ollama installed on your machine
 - Install dependencies (`pip3 install -r requirements.txt`)
+
 
 ## Run
 
@@ -20,9 +25,9 @@ NOTE: you may have to run `./repair.sh` if the script is stuck on "waiting for s
 
 ## Usage
 
-You have to say one of the following word for the microphone recording to be send to the LLM "understood", "thanks" or "do it".
-You can reset the interpreted transcription text by voice by saying "I mean", "I am saying", "reset", "I mean to say".
-You can exit by saying "goodbye"
+- You have to say one of the following word for the microphone recording to be send to the LLM "understood", "thanks" or "do it".
+- You can reset the interpreted transcription text by voice by saying "I mean", "I am saying", "reset", "I mean to say".
+- You can exit by saying "goodbye", "terminate", "exit", "ciao"
 
 ## Current capabilities
 
