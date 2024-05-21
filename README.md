@@ -15,7 +15,6 @@ this readme will be improved..
 - Ollama will download `llama2-uncensored` on your machine and 2 small hugging-face model (`facebook/mms-tts-eng` and `distil-whisper/distil-medium.en`).
 - Add `--deaf` if you want to type instead of talking.
 - type or say goodbye to exit.
-- If Jarvis is stuck on ****
 
 NOTE: you may have to run `./repair.sh` if the script is stuck on "waiting for subprocess", this due to the fact that a subprocess python script is needed to continuously listen to microphone, and it may get detached if program does not properly exit. (totally should be fixed i know)
 
