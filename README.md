@@ -18,7 +18,13 @@ this readme will be improved..
 
 NOTE: you may have to run `./repair.sh` if the script is stuck on "waiting for subprocess", this due to the fact that a subprocess python script is needed to continuously listen to microphone, and it may get detached if program does not properly exit. (totally should be fixed i know)
 
-# Current capabilities
+## Usage
+
+You have to say one of the following word for the microphone recording to be send to the LLM "understood", "thanks" or "do it".
+You can reset the interpreted transcription text by voice by saying "I mean", "I am saying", "reset", "I mean to say".
+You can exit by saying "goodbye"
+
+## Current capabilities
 
 - Understand what you say
 - Python code execution
