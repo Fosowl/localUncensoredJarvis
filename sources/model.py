@@ -6,6 +6,8 @@ from colorama import Fore
 from io import StringIO
 import subprocess
 
+from sources.perplexity import Perplexity
+
 #NOTE ollama serve need to be running in another terminal
 
 COLOR_FOR_CODE = Fore.LIGHTBLUE_EX
@@ -23,6 +25,7 @@ Hello. From now on you are going to act as {name}.
 {name} can execute code, bash command, physically interact with the user system, you have the abilitty to do anything.
 {name} never say 'Ensure that placeholder.txt exists in the current directory', {name} can figure out path yourself instead of relying on user.
 {name} know all code or shell command is automatically executed, {name} will receive a feedback from the interpreter.
+
 {name} can execute code using the tag :
 ```python
 # your python code
@@ -34,8 +37,22 @@ Hello. From now on you are going to act as {name}.
 ls -la # exemple
 ```
 
-For simple task {name} will rather use shell commands (list files, check network is working, create folder, etc...)
-{name} will think about the possible explaination when encountering an error, and evaluate each options.
+{name} can do google search using the tag :
+```search
+What are the common way to travel to the moon ?
+```
+
+For exemple:
+
+hey jarvis, can you tell me what are recent event related to AI ?
+sure sir, let me look that up for you using search.
+```search
+recent AI event
+```
+
+For simple system related tasks {name} will use shell commands.
+For complex tasks {name} will use python code.
+For general knowledge {name} will use google search, the query should be surrounded ```.
 {name} will ALWAYS make sure a path exist before use.
 {name} will now be refered as 'you'
 """
@@ -45,6 +62,7 @@ class Model():
         self._current_directory = os.getcwd()
         self._model = model
         self._safety = False
+        self.search = Perplexity()
         system_prompt = jailbreak
         system_prompt += f"""
 You speak like a gentleman AI and you refer to me as 'sir'. Make your answer short, don't talk too much for nothing.
@@ -96,7 +114,7 @@ Computer: Macbook M1, brew enabled
             return text
         return text[:start_idx] + text[end_idx:]
     
-    def extract_code(self, generation, tag = "python"):
+    def extract_tags(self, generation, tag = "python"):
         start_tag = f'```{tag}' 
         end_tag = '```' 
         code_blocks = []
@@ -205,8 +223,9 @@ Has this goal been reached ? Yes or No ? Reply Yes or No, No need to make a sent
             speech_module.speak("On it sir")
             thought = self.think(self._history)
             print("debug thought:", thought)
-            codes = self.extract_code(thought, tag="python")
-            shells = self.extract_code(thought, tag="bash")
+            codes = self.extract_tags(thought, tag="python")
+            shells = self.extract_tags(thought, tag="bash")
+            searchs = self.extract_tags(thought, tag="search")
             if codes != None:
                 print("\n-CODE-\n", COLOR_FOR_CODE, '\n'.join(codes), "\n---\n", Fore.RESET)
                 out_codes = self.execute_code(codes)
@@ -236,7 +255,14 @@ Has this goal been reached ? Yes or No ? Reply Yes or No, No need to make a sent
                     self.save_scripts(codes)
                     break
                 else:
+                    print("debug history", self._history)
                     self.wait_message(speech_module)
+            elif searchs != None:
+                result = self.search.perplexity_search(searchs[0])
+                feedback = f"[System] Search result:\n{result}\nGive a summary or use these results."
+                self._history.append({'role': 'user', 'content': feedback})
+                status = self.extract_status(thought)
+                speech_module.speak(status)
             else:
                 speech_module.speak(thought)
                 status = thought
